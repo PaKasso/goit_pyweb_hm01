@@ -1,0 +1,86 @@
+@startuml
+
+' Абстрактний базовий клас для користувальницьких уявлень
+abstract class View {
+    +show_message(message: String): void
+    +get_input(prompt: String): String
+    +display_contacts(contacts: String): void
+    +display_help(commands: String): void
+}
+
+' Конкретна реалізація консольного інтерфейсу
+class ConsoleView {
+    +show_message(message: String): void
+    +get_input(prompt: String): String
+    +display_contacts(contacts: String): void
+    +display_help(commands: String): void
+}
+
+View <|-- ConsoleView
+
+' Базовий клас для всіх полів
+class Field {
+    -value: Any
+    +__init__(value: Any)
+    +__str__(): String
+}
+
+' Клас для імені
+class Name {
+    +__init__(value: String)
+}
+
+Field <|-- Name
+
+' Клас для телефону
+class Phone {
+    +__init__(value: String)
+    +validate_phone(phone: String): Boolean
+}
+
+Field <|-- Phone
+
+' Клас для дня народження
+class Birthday {
+    +__init__(value: String)
+}
+
+Field <|-- Birthday
+
+' Клас для запису контакту
+class Record {
+    -name: Name
+    -phones: List<Phone>
+    -birthday: Birthday
+    +__init__(name: String)
+    +add_phone(phone: String): void
+    +remove_phone(phone: String): void
+    +edit_phone(old_phone: String, new_phone: String): void
+    +find_phone(phone: String): Phone
+    +add_birthday(birthday: String): void
+    +__str__(): String
+}
+
+' Клас для адресної книги
+class AddressBook {
+    -data: Dictionary<String, Record>
+    +add_record(record: Record): void
+    +find(name: String): Record
+    +delete(name: String): void
+    +get_upcoming_birthdays(): List<Dictionary>
+    +__str__(): String
+}
+
+Record "1" *-- "*" Phone
+Record "1" o-- "1" Birthday
+AddressBook "1" *-- "*" Record
+
+' Стартова точка програми
+class Main {
+    +main(view: View): void
+}
+
+Main --> View
+Main --> AddressBook
+
+@enduml
